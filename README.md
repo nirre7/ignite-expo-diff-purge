@@ -2,6 +2,8 @@
 
 [ignite](https://github.com/infinitered/ignite) based customized version of [rn-diff-purge](https://github.com/react-native-community/rn-diff-purge/), all credit should go to the authors of that great tool!
 
+For Ignite without Expo please click [HERE](https://github.com/nirre7/ignite-diff-purge)
+
 ## What?
 
 This repository exposes an untouched Ignite Expo based app generated with the ignite-cli
