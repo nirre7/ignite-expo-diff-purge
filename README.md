@@ -1,11 +1,11 @@
-# Ignite diff PURGE
+# Ignite with Expo diff PURGE
 
 [ignite](https://github.com/infinitered/ignite) based customized version of [rn-diff-purge](https://github.com/react-native-community/rn-diff-purge/), all credit should go to the authors of that great tool!
 
 ## What?
 
-This repository exposes an untouched Ignite based app generated with the ignite-cli
-`npx ignite new IgniteDiffApp -b ignite-bowser --detox`. Each new Ignite release causes a new project to be created, removing the old one, and getting a diff between them. This way, the diff is always clean, always in sync with the changes of the init template.
+This repository exposes an untouched Ignite Expo based app generated with the ignite-cli
+`nnpx ignite-cli new IgniteDiffApp --expo`. Each new Ignite release causes a new project to be created, removing the old one, and getting a diff between them. This way, the diff is always clean, always in sync with the changes of the init template.
 
 ## Diff table
 
