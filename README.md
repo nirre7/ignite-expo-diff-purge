@@ -18,7 +18,7 @@ This repository exposes an untouched Ignite Expo based app generated with the ig
 | 6.0.0    | [->6.1.1](https://github.com/nirre7/ignite-expo-diff-purge/compare/release/6.0.0..release/6.1.1) | [->6.1.0](https://github.com/nirre7/ignite-expo-diff-purge/compare/release/6.0.0..release/6.1.0) | X                                                                                                | -   |     |     |     |     |     |     |     |     |
 | 5.4.1    | [->6.1.1](https://github.com/nirre7/ignite-expo-diff-purge/compare/release/5.4.1..release/6.1.1) | [->6.1.0](https://github.com/nirre7/ignite-expo-diff-purge/compare/release/5.4.1..release/6.1.0) | [->6.0.0](https://github.com/nirre7/ignite-expo-diff-purge/compare/release/5.4.1..release/6.0.0) | X   |     |     |     |     |     |     |     |     |
 
-## To see the full table containing all releases click [HERE](https://nirre7.github.io/ignite-diff-expo-purge/)
+## To see the full table containing all releases click [HERE](https://nirre7.github.io/ignite-expo-diff-purge/)
 
 ## Notes
 
