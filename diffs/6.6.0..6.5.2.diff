@@ -1,0 +1,381 @@
+diff --git a/IgniteDiffApp/app/components/button/button.props.ts b/IgniteDiffApp/app/components/button/button.props.ts
+index c7ce16d..3541d30 100644
+--- a/IgniteDiffApp/app/components/button/button.props.ts
++++ b/IgniteDiffApp/app/components/button/button.props.ts
+@@ -1,12 +1,11 @@
+ import { ViewStyle, TextStyle, TouchableOpacityProps } from "react-native"
+ import { ButtonPresetNames } from "./button.presets"
+-import { TxKeyPath } from "../../i18n"
+ 
+ export interface ButtonProps extends TouchableOpacityProps {
+   /**
+    * Text which is looked up via i18n.
+    */
+-  tx?: TxKeyPath
++  tx?: string
+ 
+   /**
+    * The text to display if not using `tx` or nested components.
+diff --git a/IgniteDiffApp/app/components/checkbox/checkbox.props.ts b/IgniteDiffApp/app/components/checkbox/checkbox.props.ts
+index 9744c0f..7e20dcf 100644
+--- a/IgniteDiffApp/app/components/checkbox/checkbox.props.ts
++++ b/IgniteDiffApp/app/components/checkbox/checkbox.props.ts
+@@ -1,5 +1,4 @@
+ import { ViewStyle } from "react-native"
+-import { TxKeyPath } from "../../i18n"
+ 
+ export interface CheckboxProps {
+   /**
+@@ -30,7 +29,7 @@ export interface CheckboxProps {
+   /**
+    * The i18n lookup key.
+    */
+-  tx?: TxKeyPath
++  tx?: string
+ 
+   /**
+    * Multiline or clipped single line?
+diff --git a/IgniteDiffApp/app/components/header/header.props.ts b/IgniteDiffApp/app/components/header/header.props.ts
+index 7601e53..30f5da8 100644
+--- a/IgniteDiffApp/app/components/header/header.props.ts
++++ b/IgniteDiffApp/app/components/header/header.props.ts
+@@ -1,12 +1,11 @@
+ import { ViewStyle, TextStyle } from "react-native"
+ import { IconTypes } from "../icon/icons"
+-import { TxKeyPath } from "../../i18n"
+ 
+ export interface HeaderProps {
+   /**
+    * Main header, e.g. POWERED BY IGNITE
+    */
+-  headerTx?: TxKeyPath
++  headerTx?: string
+ 
+   /**
+    * header non-i18n
+diff --git a/IgniteDiffApp/app/components/text-field/text-field.tsx b/IgniteDiffApp/app/components/text-field/text-field.tsx
+index 2ebba59..717d1f5 100644
+--- a/IgniteDiffApp/app/components/text-field/text-field.tsx
++++ b/IgniteDiffApp/app/components/text-field/text-field.tsx
+@@ -1,7 +1,7 @@
+ import React from "react"
+ import { TextInput, TextInputProps, TextStyle, View, ViewStyle } from "react-native"
+ import { color, spacing, typography } from "../../theme"
+-import { translate, TxKeyPath } from "../../i18n"
++import { translate } from "../../i18n"
+ import { Text } from "../text/text"
+ import { mergeAll, flatten } from "ramda"
+ 
+@@ -28,7 +28,7 @@ export interface TextFieldProps extends TextInputProps {
+   /**
+    * The placeholder i18n key.
+    */
+-  placeholderTx?: TxKeyPath
++  placeholderTx?: string
+ 
+   /**
+    * The Placeholder text if no placeholderTx is provided.
+@@ -38,7 +38,7 @@ export interface TextFieldProps extends TextInputProps {
+   /**
+    * The label i18n key.
+    */
+-  labelTx?: TxKeyPath
++  labelTx?: string
+ 
+   /**
+    * The label text if no labelTx is provided.
+diff --git a/IgniteDiffApp/app/components/text/text.props.ts b/IgniteDiffApp/app/components/text/text.props.ts
+index 298ebc1..bad2c14 100644
+--- a/IgniteDiffApp/app/components/text/text.props.ts
++++ b/IgniteDiffApp/app/components/text/text.props.ts
+@@ -1,6 +1,5 @@
+ import { TextStyle, TextProps as TextProperties } from "react-native"
+ import { TextPresets } from "./text.presets"
+-import { TxKeyPath } from "../../i18n"
+ 
+ export interface TextProps extends TextProperties {
+   /**
+@@ -11,7 +10,7 @@ export interface TextProps extends TextProperties {
+   /**
+    * Text which is looked up via i18n.
+    */
+-  tx?: TxKeyPath
++  tx?: string
+ 
+   /**
+    * Optional options to pass to i18n. Useful for interpolation
+diff --git a/IgniteDiffApp/app/i18n/en.json b/IgniteDiffApp/app/i18n/en.json
+index be5c35c..b7f6dc4 100644
+--- a/IgniteDiffApp/app/i18n/en.json
++++ b/IgniteDiffApp/app/i18n/en.json
+@@ -19,10 +19,7 @@
+     "reactotron": "Demo Reactotron",
+     "demoList": "Demo List",
+     "androidReactotronHint": "If this doesn't work, ensure the Reactotron desktop app is running, run adb reverse tcp:9090 tcp:9090 from your terminal, and reload the app.",
+-    "iosReactotronHint": "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
+-    "macosReactotronHint": "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
+-    "webReactotronHint": "If this doesn't work, ensure the Reactotron desktop app is running and reload app.",
+-    "windowsReactotronHint": "If this doesn't work, ensure the Reactotron desktop app is running and reload app."
++    "iosReactotronHint": "If this doesn't work, ensure the Reactotron desktop app is running and reload app."
+   },
+   "demoListScreen": {
+     "title": "Demo List"
+diff --git a/IgniteDiffApp/app/i18n/i18n.ts b/IgniteDiffApp/app/i18n/i18n.ts
+index a563bbb..ffb28f5 100644
+--- a/IgniteDiffApp/app/i18n/i18n.ts
++++ b/IgniteDiffApp/app/i18n/i18n.ts
+@@ -1,22 +1,10 @@
+ import * as Localization from "expo-localization"
+ import i18n from "i18n-js"
+-import en from "./en.json"
+-import ja from "./ja.json"
++
++const en = require("./en")
++const ja = require("./ja")
+ 
+ i18n.fallbacks = true
+ i18n.translations = { en, ja }
+ 
+ i18n.locale = Localization.locale || "en"
+-
+-/**
+- * Builds up valid keypaths for translations.
+- * Update to your default locale of choice if not English.
+- */
+-type DefaultLocale = typeof en
+-export type TxKeyPath = RecursiveKeyOf<DefaultLocale>
+-
+-type RecursiveKeyOf<TObj extends Record<string, any>> = {
+-  [TKey in keyof TObj & string]: TObj[TKey] extends Record<string, any>
+-    ? `${TKey}` | `${TKey}.${RecursiveKeyOf<TObj[TKey]>}`
+-    : `${TKey}`
+-}[keyof TObj & string]
+diff --git a/IgniteDiffApp/app/i18n/index.ts b/IgniteDiffApp/app/i18n/index.ts
+index fbfba4e..e4a145a 100644
+--- a/IgniteDiffApp/app/i18n/index.ts
++++ b/IgniteDiffApp/app/i18n/index.ts
+@@ -1,3 +1,2 @@
+ import "./i18n"
+-export * from "./i18n"
+ export * from "./translate"
+diff --git a/IgniteDiffApp/app/i18n/translate.ts b/IgniteDiffApp/app/i18n/translate.ts
+index 52de684..95d5e0c 100644
+--- a/IgniteDiffApp/app/i18n/translate.ts
++++ b/IgniteDiffApp/app/i18n/translate.ts
+@@ -1,11 +1,10 @@
+ import i18n from "i18n-js"
+-import { TxKeyPath } from "./i18n"
+ 
+ /**
+  * Translates text.
+  *
+  * @param key The i18n key.
+  */
+-export function translate(key: TxKeyPath, options?: I18n.TranslateOptions) {
++export function translate(key: string, options?: I18n.TranslateOptions) {
+   return key ? i18n.t(key, options) : null
+ }
+diff --git a/IgniteDiffApp/app/screens/demo/demo-screen.tsx b/IgniteDiffApp/app/screens/demo/demo-screen.tsx
+index ece1b86..afc874b 100644
+--- a/IgniteDiffApp/app/screens/demo/demo-screen.tsx
++++ b/IgniteDiffApp/app/screens/demo/demo-screen.tsx
+@@ -151,7 +151,7 @@ export const DemoScreen = observer(function DemoScreen() {
+             tx="demoScreen.reactotron"
+             onPress={demoReactotron}
+           />
+-          <Text style={HINT} tx={`demoScreen.${Platform.OS}ReactotronHint` as const} />
++          <Text style={HINT} tx={`demoScreen.${Platform.OS}ReactotronHint`} />
+         </View>
+         <Button
+           style={DEMO}
+diff --git a/IgniteDiffApp/tsconfig.json b/IgniteDiffApp/tsconfig.json
+index 2f7b56a..f5bff60 100644
+--- a/IgniteDiffApp/tsconfig.json
++++ b/IgniteDiffApp/tsconfig.json
+@@ -13,8 +13,7 @@
+     "sourceMap": true,
+     "target": "esnext",
+     "lib": ["esnext"],
+-    "skipLibCheck": true,
+-    "resolveJsonModule": true
++    "skipLibCheck": true
+   },
+   "exclude": ["node_modules"],
+   "include": ["App.js", "app", "test", "storybook"]
+diff --git a/IgniteDiffApp/yarn.lock b/IgniteDiffApp/yarn.lock
+index 34506a1..0344865 100644
+--- a/IgniteDiffApp/yarn.lock
++++ b/IgniteDiffApp/yarn.lock
+@@ -3226,9 +3226,9 @@
+     "@types/jest" "*"
+ 
+ "@types/jest@*":
+-  version "26.0.22"
+-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-26.0.22.tgz#8308a1debdf1b807aa47be2838acdcd91e88fbe6"
+-  integrity sha512-eeWwWjlqxvBxc4oQdkueW5OF/gtfSceKk4OnOAGlUSwS/liBRtZppbJuz1YkgbrbfGOoeBHun9fOvXnjNwrSOw==
++  version "26.0.21"
++  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-26.0.21.tgz#3a73c2731e7e4f0fbaea56ce7ff8c79cf812bd24"
++  integrity sha512-ab9TyM/69yg7eew9eOwKMUmvIZAKEGZYlq/dhe5/0IMUd/QLJv5ldRMdddSn+u22N13FP3s5jYyktxuBwY0kDA==
+   dependencies:
+     jest-diff "^26.0.0"
+     pretty-format "^26.0.0"
+@@ -3287,9 +3287,9 @@
+     form-data "^3.0.0"
+ 
+ "@types/node@*":
+-  version "14.14.36"
+-  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.36.tgz#5637905dbb15c30a33a3c65b9ef7c20e3c85ebad"
+-  integrity sha512-kjivUwDJfIjngzbhooRnOLhGYz6oRFi+L+EpMjxroDYXwDw9lHrJJ43E+dJ6KAd3V3WxWAJ/qZE9XKYHhjPOFQ==
++  version "14.14.35"
++  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.35.tgz#42c953a4e2b18ab931f72477e7012172f4ffa313"
++  integrity sha512-Lt+wj8NVPx0zUmUwumiVXapmaLUcAk3yPuHCFVXras9k5VT9TdhJqKqGVUQCD60OTMCl0qxJ57OiTL0Mic3Iag==
+ 
+ "@types/normalize-package-data@^2.4.0":
+   version "2.4.0"
+@@ -3441,10 +3441,10 @@
+   resolved "https://registry.yarnpkg.com/@types/stack-utils/-/stack-utils-2.0.0.tgz#7036640b4e21cc2f259ae826ce843d277dad8cff"
+   integrity sha512-RJJrrySY7A8havqpGObOB4W92QXKJo63/jFLLgpvOtsGUqbQZ9Sbgl35KMm1DjC6j7AvmmU2bIno+3IyEaemaw==
+ 
+-"@types/tapable@^1", "@types/tapable@^1.0.5":
+-  version "1.0.7"
+-  resolved "https://registry.yarnpkg.com/@types/tapable/-/tapable-1.0.7.tgz#545158342f949e8fd3bfd813224971ecddc3fac4"
+-  integrity sha512-0VBprVqfgFD7Ehb2vd8Lh9TG3jP98gvr8rgehQqzztZNI7o8zS8Ad4jyZneKELphpuE212D8J70LnSNQSyO6bQ==
++"@types/tapable@*", "@types/tapable@^1.0.5":
++  version "1.0.6"
++  resolved "https://registry.yarnpkg.com/@types/tapable/-/tapable-1.0.6.tgz#a9ca4b70a18b270ccb2bc0aaafefd1d486b7ea74"
++  integrity sha512-W+bw9ds02rAQaMvaLYxAbJ6cvguW/iJXNT6lTssS1ps6QdrMKttqEAMEG/b5CR8TZl3/L7/lH0ZV5nNR1LXikA==
+ 
+ "@types/uglify-js@*":
+   version "3.13.0"
+@@ -3473,13 +3473,13 @@
+     source-map "^0.7.3"
+ 
+ "@types/webpack@^4.41.8":
+-  version "4.41.27"
+-  resolved "https://registry.yarnpkg.com/@types/webpack/-/webpack-4.41.27.tgz#f47da488c8037e7f1b2dbf2714fbbacb61ec0ffc"
+-  integrity sha512-wK/oi5gcHi72VMTbOaQ70VcDxSQ1uX8S2tukBK9ARuGXrYM/+u4ou73roc7trXDNmCxCoerE8zruQqX/wuHszA==
++  version "4.41.26"
++  resolved "https://registry.yarnpkg.com/@types/webpack/-/webpack-4.41.26.tgz#27a30d7d531e16489f9c7607c747be6bc1a459ef"
++  integrity sha512-7ZyTfxjCRwexh+EJFwRUM+CDB2XvgHl4vfuqf1ZKrgGvcS5BrNvPQqJh3tsZ0P6h6Aa1qClVHaJZszLPzpqHeA==
+   dependencies:
+     "@types/anymatch" "*"
+     "@types/node" "*"
+-    "@types/tapable" "^1"
++    "@types/tapable" "*"
+     "@types/uglify-js" "*"
+     "@types/webpack-sources" "*"
+     source-map "^0.6.0"
+@@ -5113,7 +5113,7 @@ base64-js@1.2.0:
+   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.2.0.tgz#a39992d723584811982be5e290bb6a53d86700f1"
+   integrity sha1-o5mS1yNYSBGYK+XikLtqU9hnAPE=
+ 
+-base64-js@^1.0.2, base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.3.1, base64-js@^1.5.1:
++base64-js@^1.0.2, base64-js@^1.1.2, base64-js@^1.2.3, base64-js@^1.3.1:
+   version "1.5.1"
+   resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
+   integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
+@@ -7219,9 +7219,9 @@ ejs@^3.1.2:
+     jake "^10.6.1"
+ 
+ electron-to-chromium@^1.3.247, electron-to-chromium@^1.3.378, electron-to-chromium@^1.3.649:
+-  version "1.3.700"
+-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.700.tgz#a6999a954c698dc7da5e84c369d65432dbe895be"
+-  integrity sha512-wQtaxVZzpOeCjW1CGuC5W3bYjE2jglvk076LcTautBOB9UtHztty7wNzjVsndiMcSsdUsdMy5w76w5J1U7OPTQ==
++  version "1.3.699"
++  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.699.tgz#854eea9db8bc8109c409a4807bfdb200dd75a2c7"
++  integrity sha512-fjt43CPXdPYwD9ybmKbNeLwZBmCVdLY2J5fGZub7/eMPuiqQznOGNXv/wurnpXIlE7ScHnvG9Zi+H4/i6uMKmw==
+ 
+ element-resize-detector@^1.2.1:
+   version "1.2.2"
+@@ -9272,7 +9272,7 @@ has-ansi@^2.0.0:
+   dependencies:
+     ansi-regex "^2.0.0"
+ 
+-has-bigints@^1.0.1:
++has-bigints@^1.0.0:
+   version "1.0.1"
+   resolved "https://registry.yarnpkg.com/has-bigints/-/has-bigints-1.0.1.tgz#64fe6acb020673e3b78db035a5af69aa9d07b113"
+   integrity sha512-LSBS2LjbNBTf6287JEbEzvJgftkF5qFkmCo9hDRpAzKhUOlJ+hx8dd4USs00SgsUNwc4617J9ki5YtEClM2ffA==
+@@ -9299,7 +9299,7 @@ has-symbol-support-x@^1.4.1:
+   resolved "https://registry.yarnpkg.com/has-symbol-support-x/-/has-symbol-support-x-1.4.2.tgz#1409f98bc00247da45da67cee0a36f282ff26455"
+   integrity sha512-3ToOva++HaW+eCpgqZrCfN51IPB+7bJNVT6CUATzueB5Heb8o6Nam0V3HG5dlDvZU1Gn5QLcbahiKw/XVk5JJw==
+ 
+-has-symbols@^1.0.1, has-symbols@^1.0.2:
++has-symbols@^1.0.0, has-symbols@^1.0.1, has-symbols@^1.0.2:
+   version "1.0.2"
+   resolved "https://registry.yarnpkg.com/has-symbols/-/has-symbols-1.0.2.tgz#165d3070c00309752a1236a479331e3ac56f1423"
+   integrity sha512-chXa79rL/UC2KlX17jo3vRGz0azaWEx5tGqZg5pO3NUyEJVB17dMruQlzCCOfUvElghKcm5194+BCRvi2Rv/Gw==
+@@ -13720,13 +13720,13 @@ plist@^2.1.0:
+     xmldom "0.1.x"
+ 
+ plist@^3.0.1:
+-  version "3.0.2"
+-  resolved "https://registry.yarnpkg.com/plist/-/plist-3.0.2.tgz#74bbf011124b90421c22d15779cee60060ba95bc"
+-  integrity sha512-MSrkwZBdQ6YapHy87/8hDU8MnIcyxBKjeF+McXnr5A9MtffPewTs7G3hlpodT5TacyfIyFTaJEhh3GGcmasTgQ==
++  version "3.0.1"
++  resolved "https://registry.yarnpkg.com/plist/-/plist-3.0.1.tgz#a9b931d17c304e8912ef0ba3bdd6182baf2e1f8c"
++  integrity sha512-GpgvHHocGRyQm74b6FWEZZVRroHKE1I0/BTjAmySaohK+cUn+hZpbqXkc3KWgW3gQYkqcQej35FohcT0FRlkRQ==
+   dependencies:
+-    base64-js "^1.5.1"
++    base64-js "^1.2.3"
+     xmlbuilder "^9.0.7"
+-    xmldom "^0.5.0"
++    xmldom "0.1.x"
+ 
+ plugin-error@^0.1.2:
+   version "0.1.2"
+@@ -14905,9 +14905,9 @@ react-popper@^1.3.7:
+     warning "^4.0.2"
+ 
+ react-popper@^2.2.4:
+-  version "2.2.5"
+-  resolved "https://registry.yarnpkg.com/react-popper/-/react-popper-2.2.5.tgz#1214ef3cec86330a171671a4fbcbeeb65ee58e96"
+-  integrity sha512-kxGkS80eQGtLl18+uig1UIf9MKixFSyPxglsgLBxlYnyDf65BiY9B3nZSc6C9XUNDgStROB0fMQlTEz1KxGddw==
++  version "2.2.4"
++  resolved "https://registry.yarnpkg.com/react-popper/-/react-popper-2.2.4.tgz#d2ad3d2474ac9f1abf93df3099d408e5aa6a2e22"
++  integrity sha512-NacOu4zWupdQjVXq02XpTD3yFPSfg5a7fex0wa3uGKVkFK7UN6LvVxgcb+xYr56UCuWiNPMH20tntdVdJRwYew==
+   dependencies:
+     react-fast-compare "^3.0.1"
+     warning "^4.0.2"
+@@ -17360,14 +17360,14 @@ ultron@~1.1.0:
+   integrity sha512-UIEXBNeYmKptWH6z8ZnqTeS8fV74zG0/eRU9VGkpzz+LIJNs8W/zM/L+7ctCkRrgbNnnR0xxw4bKOr0cW0N0Og==
+ 
+ unbox-primitive@^1.0.0:
+-  version "1.0.1"
+-  resolved "https://registry.yarnpkg.com/unbox-primitive/-/unbox-primitive-1.0.1.tgz#085e215625ec3162574dc8859abee78a59b14471"
+-  integrity sha512-tZU/3NqK3dA5gpE1KtyiJUrEB0lxnGkMFHptJ7q6ewdZ8s12QrODwNbhIJStmJkd1QDXa1NRA8aF2A1zk/Ypyw==
++  version "1.0.0"
++  resolved "https://registry.yarnpkg.com/unbox-primitive/-/unbox-primitive-1.0.0.tgz#eeacbc4affa28e9b3d36b5eaeccc50b3251b1d3f"
++  integrity sha512-P/51NX+JXyxK/aigg1/ZgyccdAxm5K1+n8+tvqSntjOivPt19gvm1VC49RWYetsiub8WViUchdxl/KWHHB0kzA==
+   dependencies:
+     function-bind "^1.1.1"
+-    has-bigints "^1.0.1"
+-    has-symbols "^1.0.2"
+-    which-boxed-primitive "^1.0.2"
++    has-bigints "^1.0.0"
++    has-symbols "^1.0.0"
++    which-boxed-primitive "^1.0.1"
+ 
+ unfetch@^4.1.0:
+   version "4.2.0"
+@@ -18016,7 +18016,7 @@ whatwg-url@^7.0.0:
+     tr46 "^1.0.1"
+     webidl-conversions "^4.0.2"
+ 
+-which-boxed-primitive@^1.0.1, which-boxed-primitive@^1.0.2:
++which-boxed-primitive@^1.0.1:
+   version "1.0.2"
+   resolved "https://registry.yarnpkg.com/which-boxed-primitive/-/which-boxed-primitive-1.0.2.tgz#13757bc89b209b049fe5d86430e21cf40a89a8e6"
+   integrity sha512-bwZdv0AKLpplFY2KZRX6TvyuN7ojjr7lwkg6ml0roIy9YeuSr7JS372qlNW18UQYzgYK9ziGcerWqZOmEn9VNg==
+@@ -18365,11 +18365,6 @@ xmldom@0.1.x, xmldom@^0.1.27, xmldom@~0.1.31:
+   resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.31.tgz#b76c9a1bd9f0a9737e5a72dc37231cf38375e2ff"
+   integrity sha512-yS2uJflVQs6n+CyjHoaBmVSqIDevTAWrzMmjG1Gc7h1qQ7uVozNhEPJAwZXWyGQ/Gafo3fCwrcaokezLPupVyQ==
+ 
+-xmldom@^0.5.0:
+-  version "0.5.0"
+-  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.5.0.tgz#193cb96b84aa3486127ea6272c4596354cb4962e"
+-  integrity sha512-Foaj5FXVzgn7xFzsKeNIde9g6aFBxTPi37iwsno8QvApmtg7KYrr+OPyRHcJF7dud2a5nGRBXK3n0dL62Gf7PA==
+-
+ xpipe@^1.0.5:
+   version "1.0.5"
+   resolved "https://registry.yarnpkg.com/xpipe/-/xpipe-1.0.5.tgz#8dd8bf45fc3f7f55f0e054b878f43a62614dafdf"
