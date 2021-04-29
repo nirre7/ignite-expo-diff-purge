@@ -1,0 +1,186 @@
+diff --git a/IgniteDiffApp/app/components/text/text.props.ts b/IgniteDiffApp/app/components/text/text.props.ts
+index d2c55dc..10417c2 100644
+--- a/IgniteDiffApp/app/components/text/text.props.ts
++++ b/IgniteDiffApp/app/components/text/text.props.ts
+@@ -1,5 +1,4 @@
+ import { StyleProp, TextProps as TextProperties, TextStyle } from "react-native"
+-import i18n from "i18n-js"
+ import { TextPresets } from "./text.presets"
+ import { TxKeyPath } from "../../i18n"
+ 
+@@ -18,7 +17,7 @@ export interface TextProps extends TextProperties {
+    * Optional options to pass to i18n. Useful for interpolation
+    * as well as explicitly setting locale or translation fallbacks.
+    */
+-  txOptions?: i18n.TranslateOptions
++  txOptions?: I18n.TranslateOptions
+ 
+   /**
+    * The text to display if not using `tx` or nested components.
+diff --git a/IgniteDiffApp/app/i18n/translate.ts b/IgniteDiffApp/app/i18n/translate.ts
+index ef1a019..52de684 100644
+--- a/IgniteDiffApp/app/i18n/translate.ts
++++ b/IgniteDiffApp/app/i18n/translate.ts
+@@ -6,6 +6,6 @@ import { TxKeyPath } from "./i18n"
+  *
+  * @param key The i18n key.
+  */
+-export function translate(key: TxKeyPath, options?: i18n.TranslateOptions) {
++export function translate(key: TxKeyPath, options?: I18n.TranslateOptions) {
+   return key ? i18n.t(key, options) : null
+ }
+diff --git a/IgniteDiffApp/yarn.lock b/IgniteDiffApp/yarn.lock
+index 6f9cd6b..eb0db17 100644
+--- a/IgniteDiffApp/yarn.lock
++++ b/IgniteDiffApp/yarn.lock
+@@ -3359,9 +3359,9 @@
+     "@types/jest" "*"
+ 
+ "@types/jest@*":
+-  version "26.0.23"
+-  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-26.0.23.tgz#a1b7eab3c503b80451d019efb588ec63522ee4e7"
+-  integrity sha512-ZHLmWMJ9jJ9PTiT58juykZpL7KjwJywFN3Rr2pTSkyQfydf/rk22yS7W8p5DaVUMQ2BQC7oYiU3FjbTM/mYrOA==
++  version "26.0.22"
++  resolved "https://registry.yarnpkg.com/@types/jest/-/jest-26.0.22.tgz#8308a1debdf1b807aa47be2838acdcd91e88fbe6"
++  integrity sha512-eeWwWjlqxvBxc4oQdkueW5OF/gtfSceKk4OnOAGlUSwS/liBRtZppbJuz1YkgbrbfGOoeBHun9fOvXnjNwrSOw==
+   dependencies:
+     jest-diff "^26.0.0"
+     pretty-format "^26.0.0"
+@@ -3420,9 +3420,9 @@
+     form-data "^3.0.0"
+ 
+ "@types/node@*":
+-  version "15.0.1"
+-  resolved "https://registry.yarnpkg.com/@types/node/-/node-15.0.1.tgz#ef34dea0881028d11398be5bf4e856743e3dc35a"
+-  integrity sha512-TMkXt0Ck1y0KKsGr9gJtWGjttxlZnnvDtphxUOSd0bfaR6Q1jle+sPvrzNR1urqYTWMinoKvjKfXUGsumaO1PA==
++  version "14.14.41"
++  resolved "https://registry.yarnpkg.com/@types/node/-/node-14.14.41.tgz#d0b939d94c1d7bd53d04824af45f1139b8c45615"
++  integrity sha512-dueRKfaJL4RTtSa7bWeTK1M+VH+Gns73oCgzvYfHZywRCoPSd8EkXBL0mZ9unPTveBn+D9phZBaxuzpwjWkW0g==
+ 
+ "@types/normalize-package-data@^2.4.0":
+   version "2.4.0"
+@@ -3522,9 +3522,9 @@
+     "@types/react" "*"
+ 
+ "@types/react@*":
+-  version "17.0.4"
+-  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.4.tgz#a67c6f7a460d2660e950d9ccc1c2f18525c28220"
+-  integrity sha512-onz2BqScSFMoTRdJUZUDD/7xrusM8hBA2Fktk2qgaTYPCgPvWnDEgkrOs8hhPUf2jfcIXkJ5yK6VfYormJS3Jw==
++  version "17.0.3"
++  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.3.tgz#ba6e215368501ac3826951eef2904574c262cc79"
++  integrity sha512-wYOUxIgs2HZZ0ACNiIayItyluADNbONl7kt8lkLjVK8IitMH5QMyAh75Fwhmo37r1m7L2JaFj03sIfxBVDvRAg==
+   dependencies:
+     "@types/prop-types" "*"
+     "@types/scheduler" "*"
+@@ -3966,9 +3966,9 @@ acorn@^7.1.0, acorn@^7.1.1, acorn@^7.4.0:
+   integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
+ 
+ acorn@^8.1.0:
+-  version "8.2.2"
+-  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.2.2.tgz#c4574e4fea298d6e6ed4b85ab844b06dd59f26d6"
+-  integrity sha512-VrMS8kxT0e7J1EX0p6rI/E0FbfOVcvBpbIqHThFv+f8YrZIlMfVotYcXKVPmTvPW8sW5miJzfUFrrvthUZg8VQ==
++  version "8.2.1"
++  resolved "https://registry.yarnpkg.com/acorn/-/acorn-8.2.1.tgz#0d36af126fb6755095879c1dc6fd7edf7d60a5fb"
++  integrity sha512-z716cpm5TX4uzOzILx8PavOE6C6DKshHDw1aQN52M/yNSqE9s5O8SMfyhCCfCJ3HmTL0NkVOi+8a/55T7YB3bg==
+ 
+ address@1.1.2, address@^1.0.1:
+   version "1.1.2"
+@@ -5536,7 +5536,7 @@ browserslist@4.7.0:
+     electron-to-chromium "^1.3.247"
+     node-releases "^1.1.29"
+ 
+-browserslist@^4.12.0, browserslist@^4.14.5, browserslist@^4.16.5:
++browserslist@^4.12.0, browserslist@^4.14.5, browserslist@^4.16.4:
+   version "4.16.5"
+   resolved "https://registry.yarnpkg.com/browserslist/-/browserslist-4.16.5.tgz#952825440bca8913c62d0021334cbe928ef062ae"
+   integrity sha512-C2HAjrM1AI/djrpAUU/tr4pml1DqLIzJKSLDBXBrNErl9ZCCTXdhwxdJjYc16953+mBWf7Lw+uUJgpgb8cN71A==
+@@ -5846,9 +5846,9 @@ can-use-dom@^0.1.0:
+   integrity sha1-IsxKNKCrxDlQ9CxkEQJKP2NmtFo=
+ 
+ caniuse-lite@^1.0.30000989, caniuse-lite@^1.0.30001035, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001214:
+-  version "1.0.30001219"
+-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001219.tgz#5bfa5d0519f41f993618bd318f606a4c4c16156b"
+-  integrity sha512-c0yixVG4v9KBc/tQ2rlbB3A/bgBFRvl8h8M4IeUbqCca4gsiCfvtaheUssbnux/Mb66Vjz7x8yYjDgYcNQOhyQ==
++  version "1.0.30001214"
++  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001214.tgz#70f153c78223515c6d37a9fde6cd69250da9d872"
++  integrity sha512-O2/SCpuaU3eASWVaesQirZv1MSjUNOvmugaD8zNSJqw6Vv5SGwoOpA9LJs3pNPfM745nxqPvfZY3MQKY4AKHYg==
+ 
+ canvas@2.6.1:
+   version "2.6.1"
+@@ -6524,17 +6524,17 @@ copy-to-clipboard@^3.0.8:
+     toggle-selection "^1.0.6"
+ 
+ core-js-compat@^3.8.0, core-js-compat@^3.9.0, core-js-compat@^3.9.1:
+-  version "3.11.1"
+-  resolved "https://registry.yarnpkg.com/core-js-compat/-/core-js-compat-3.11.1.tgz#57a91e9b02d3bb8cf37f82eceaf44a3d646fa614"
+-  integrity sha512-aZ0e4tmlG/aOBHj92/TuOuZwp6jFvn1WNabU5VOVixzhu5t5Ao+JZkQOPlgNXu6ynwLrwJxklT4Gw1G1VGEh+g==
++  version "3.11.0"
++  resolved "https://registry.yarnpkg.com/core-js-compat/-/core-js-compat-3.11.0.tgz#635683f43480a0b41e3f6be3b1c648dadb8b4390"
++  integrity sha512-3wsN9YZJohOSDCjVB0GequOyHax8zFiogSX3XWLE28M1Ew7dTU57tgHjIylSBKSIouwmLBp3g61sKMz/q3xEGA==
+   dependencies:
+-    browserslist "^4.16.5"
++    browserslist "^4.16.4"
+     semver "7.0.0"
+ 
+ core-js-pure@^3.0.1:
+-  version "3.11.1"
+-  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.11.1.tgz#fd52fa8c8b7b797b3606524b3d97278a8d8e7f09"
+-  integrity sha512-2JukQi8HgAOCD5CSimxWWXVrUBoA9Br796uIA5Z06bIjt7PBBI19ircFaAxplgE1mJf3x2BY6MkT/HWA/UryPg==
++  version "3.11.0"
++  resolved "https://registry.yarnpkg.com/core-js-pure/-/core-js-pure-3.11.0.tgz#e07f25a8f616d178ec16b0354b008ad28b20b2f0"
++  integrity sha512-PxEiQGjzC+5qbvE7ZIs5Zn6BynNeZO9zHhrrWmkRff2SZLq0CE/H5LuZOJHhmOQ8L38+eMzEHAmPYWrUtDfuDQ==
+ 
+ core-js@^1.0.0:
+   version "1.2.7"
+@@ -6547,9 +6547,9 @@ core-js@^2.4.0, core-js@^2.4.1:
+   integrity sha512-Kb2wC0fvsWfQrgk8HU5lW6U/Lcs8+9aaYcy4ZFc6DDlo4nZ7n70dEgE5rtR0oG6ufKDUnrwfWL1mXR5ljDatrQ==
+ 
+ core-js@^3.0.1, core-js@^3.0.4, core-js@^3.6.5:
+-  version "3.11.1"
+-  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.11.1.tgz#f920392bf8ed63a0ec8e4e729857bfa3d121c525"
+-  integrity sha512-k93Isqg7e4txZWMGNYwevZL9MiogLk8pd1PtwrmFmi8IBq4GXqUaVW/a33Llt6amSI36uSjd0GWwc9pTT9ALlQ==
++  version "3.11.0"
++  resolved "https://registry.yarnpkg.com/core-js/-/core-js-3.11.0.tgz#05dac6aa70c0a4ad842261f8957b961d36eb8926"
++  integrity sha512-bd79DPpx+1Ilh9+30aT5O1sgpQd4Ttg8oqkqi51ZzhedMM1omD2e6IOF48Z/DzDCZ2svp49tN/3vneTK6ZBkXw==
+ 
+ core-util-is@1.0.2, core-util-is@~1.0.0:
+   version "1.0.2"
+@@ -7391,9 +7391,9 @@ ejs@^3.1.2:
+     jake "^10.6.1"
+ 
+ electron-to-chromium@^1.3.247, electron-to-chromium@^1.3.378, electron-to-chromium@^1.3.719:
+-  version "1.3.723"
+-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.723.tgz#52769a75635342a4db29af5f1e40bd3dad02c877"
+-  integrity sha512-L+WXyXI7c7+G1V8ANzRsPI5giiimLAUDC6Zs1ojHHPhYXb3k/iTABFmWjivEtsWrRQymjnO66/rO2ZTABGdmWg==
++  version "1.3.720"
++  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.720.tgz#f5d66df8754d993006b7b2ded15ff7738c58bd94"
++  integrity sha512-B6zLTxxaOFP4WZm6DrvgRk8kLFYWNhQ5TrHMC0l5WtkMXhU5UbnvWoTfeEwqOruUSlNMhVLfYak7REX6oC5Yfw==
+ 
+ element-resize-detector@^1.2.1:
+   version "1.2.2"
+@@ -8787,9 +8787,9 @@ focus-lock@^0.8.1:
+     tslib "^1.9.3"
+ 
+ follow-redirects@^1.10.0, follow-redirects@^1.2.3, follow-redirects@^1.4.1:
+-  version "1.14.0"
+-  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.0.tgz#f5d260f95c5f8c105894491feee5dc8993b402fe"
+-  integrity sha512-0vRwd7RKQBTt+mgu87mtYeofLFZpTas2S9zY+jIeuLJMNvudIgF52nr19q40HOwH5RrhWIPuj9puybzSJiRrVg==
++  version "1.13.3"
++  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.13.3.tgz#e5598ad50174c1bc4e872301e82ac2cd97f90267"
++  integrity sha512-DUgl6+HDzB0iEptNQEXLx/KhTmDb8tZUHSeLqpnjpknR70H0nC2t9N73BK6fN4hOvJ84pKlIQVQ4k5FFlBedKA==
+ 
+ fontfaceobserver@^2.1.0:
+   version "2.1.0"
+@@ -15188,9 +15188,9 @@ react-devtools-core@4.10.1:
+     ws "^7"
+ 
+ react-devtools-core@^4.6.0:
+-  version "4.13.0"
+-  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.13.0.tgz#fa80ee03b1a975c1d9898e24de841e45a4b22d30"
+-  integrity sha512-KR+0pLw8wTjOVr+9AECe5ctmycaAjbmxN3bbdB0vmlwm0JkxNnKMxDzanf+4V8IuPBQWgm8qdWpbSOqhu1l14g==
++  version "4.12.4"
++  resolved "https://registry.yarnpkg.com/react-devtools-core/-/react-devtools-core-4.12.4.tgz#50ed121d467f44b051d1f7d19694849db0365d52"
++  integrity sha512-hVCT7wRtA5xWclgLb3oA51RNBAlbuTauEYkqFX+qRAkPLVJoX8qdJnO7r+47SSUckD5vkBm3kaAhg6597m7gDA==
+   dependencies:
+     shell-quote "^1.6.1"
+     ws "^7"
