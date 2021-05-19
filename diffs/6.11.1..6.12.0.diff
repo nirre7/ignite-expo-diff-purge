@@ -1,0 +1,76 @@
+diff --git a/IgniteDiffApp/app/components/screen/screen.presets.ts b/IgniteDiffApp/app/components/screen/screen.presets.ts
+index 8ba3b2e..ae75064 100644
+--- a/IgniteDiffApp/app/components/screen/screen.presets.ts
++++ b/IgniteDiffApp/app/components/screen/screen.presets.ts
+@@ -1,5 +1,4 @@
+ import { ViewStyle } from "react-native"
+-import { isNil } from "ramda"
+ import { color } from "../../theme"
+ 
+ /**
+@@ -63,5 +62,5 @@ export type ScreenPresets = keyof typeof presets
+  */
+ export function isNonScrolling(preset: ScreenPresets) {
+   // any of these things will make you scroll
+-  return isNil(preset) || !preset.length || isNil(presets[preset]) || preset === "fixed"
++  return !preset || !presets[preset] || preset === "fixed"
+ }
+diff --git a/IgniteDiffApp/app/utils/validate.ts b/IgniteDiffApp/app/utils/validate.ts
+index 22d42cb..91db9b6 100644
+--- a/IgniteDiffApp/app/utils/validate.ts
++++ b/IgniteDiffApp/app/utils/validate.ts
+@@ -1,4 +1,3 @@
+-import { contains } from "ramda"
+ const ValidateJS = require("validate.js")
+ 
+ // HACK(steve): wierd typescript situation because of strange typings
+@@ -9,7 +8,7 @@ const Validate: any = ValidateJS.default ? ValidateJS.default : ValidateJS
+  */
+ Validate.validators.excludes = function custom(value, options, key, attributes) {
+   const list = attributes[options.attribute] || []
+-  if (value && contains(value, list)) {
++  if (value && list.includes(value)) {
+     return options.message || `${value} is in the list`
+   }
+ }
+diff --git a/IgniteDiffApp/package.json b/IgniteDiffApp/package.json
+index 07ed923..b2a57bf 100644
+--- a/IgniteDiffApp/package.json
++++ b/IgniteDiffApp/package.json
+@@ -41,7 +41,6 @@
+     "mobx": "6.1.8",
+     "mobx-react-lite": "3.2.0",
+     "mobx-state-tree": "5.0.1",
+-    "ramda": "0.27.1",
+     "react": "16.13.1",
+     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
+     "react-native-gesture-handler": "1.10.3",
+diff --git a/IgniteDiffApp/yarn.lock b/IgniteDiffApp/yarn.lock
+index de62b3f..401b0ac 100644
+--- a/IgniteDiffApp/yarn.lock
++++ b/IgniteDiffApp/yarn.lock
+@@ -14990,11 +14990,6 @@ ramda@0.25.0, ramda@^0.25.0:
+   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.25.0.tgz#8fdf68231cffa90bc2f9460390a0cb74a29b29a9"
+   integrity sha512-GXpfrYVPwx3K7RQ6aYT8KPS8XViSXUVJT1ONhoKPE9VAleW42YE+U+8VEyGWt41EnEQW7gwecYJriTI0pKoecQ==
+ 
+-ramda@0.27.1:
+-  version "0.27.1"
+-  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.27.1.tgz#66fc2df3ef873874ffc2da6aa8984658abacf5c9"
+-  integrity sha512-PgIdVpn5y5Yns8vqb8FzBUEYn98V3xcPgawAkkgj0YJ0qDsnHCiNmZYfOGMgOvoB0eWFLpYbhxUR3mxfDIMvpw==
+-
+ ramda@^0.21.0:
+   version "0.21.0"
+   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.21.0.tgz#a001abedb3ff61077d4ff1d577d44de77e8d0a35"
+@@ -15265,9 +15260,9 @@ react-lifecycles-compat@^3.0.0, react-lifecycles-compat@^3.0.4:
+   integrity sha512-fBASbA6LnOU9dOU2eW7aQ8xmYBSXUIWr+UmF9b1efZBazGNO+rcXT/icdKnYm2pTwcRylVUYwW7H1PHfLekVzA==
+ 
+ react-native-clean-project@^3.6.3:
+-  version "3.6.3"
+-  resolved "https://registry.yarnpkg.com/react-native-clean-project/-/react-native-clean-project-3.6.3.tgz#ad43b8e1491512f285b7f455ac56db3328b5a65f"
+-  integrity sha512-sBbv+Zl05O9LfQqamLu2Crb//W/d8+l59TICF8nKxQ0nJsvear06a1CB2+FaO3rCrPNHiSjDDNXZ/D6muHTUkw==
++  version "3.6.4"
++  resolved "https://registry.yarnpkg.com/react-native-clean-project/-/react-native-clean-project-3.6.4.tgz#7589fffe82a184f1bcc0554d6a95c7bac4b1e9ef"
++  integrity sha512-bQij/EktcOb9VnEUg+UaC4bePWlGeqsLk0dyCJyQmHc4s1Cw7lo+cnnFVbuyFnjT0sEMSkDvDF0/rLD6437XMw==
+ 
+ react-native-flipper@^0.34.0:
+   version "0.34.0"
