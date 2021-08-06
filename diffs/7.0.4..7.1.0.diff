@@ -1,0 +1,335 @@
+diff --git a/IgniteDiffApp/app/app.tsx b/IgniteDiffApp/app/app.tsx
+index d737864..84cbf06 100644
+--- a/IgniteDiffApp/app/app.tsx
++++ b/IgniteDiffApp/app/app.tsx
+@@ -18,9 +18,9 @@ import { initFonts } from "./theme/fonts" // expo
+ import * as storage from "./utils/storage"
+ import {
+   useBackButtonHandler,
+-  RootNavigator,
++  AppNavigator,
+   canExit,
+-  setRootNavigation,
++  setAppNavigation,
+   useNavigationPersistence,
+ } from "./navigators"
+ import { RootStore, RootStoreProvider, setupRootStore } from "./models"
+@@ -41,7 +41,7 @@ function App() {
+   const navigationRef = useRef<NavigationContainerRef>(null)
+   const [rootStore, setRootStore] = useState<RootStore | undefined>(undefined)
+ 
+-  setRootNavigation(navigationRef)
++  setAppNavigation(navigationRef)
+   useBackButtonHandler(navigationRef, canExit)
+   const { initialNavigationState, onNavigationStateChange } = useNavigationPersistence(
+     storage,
+@@ -67,7 +67,7 @@ function App() {
+     <ToggleStorybook>
+       <RootStoreProvider value={rootStore}>
+         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+-          <RootNavigator
++          <AppNavigator
+             ref={navigationRef}
+             initialState={initialNavigationState}
+             onStateChange={onNavigationStateChange}
+diff --git a/IgniteDiffApp/app/components/auto-image/auto-image.tsx b/IgniteDiffApp/app/components/auto-image/auto-image.tsx
+index e04d366..39d71ca 100644
+--- a/IgniteDiffApp/app/components/auto-image/auto-image.tsx
++++ b/IgniteDiffApp/app/components/auto-image/auto-image.tsx
+@@ -10,6 +10,19 @@ type ImageProps = DefaultImageProps & {
+   source: ImageURISource
+ }
+ 
++/**
++ * An Image wrapper component that autosizes itself to the size of the actual image.
++ * You can always override by passing a width and height in the style.
++ * If passing only one of width/height this image component will use the actual
++ * size of the other dimension.
++ *
++ * This component isn't required, but is provided as a convenience so that
++ * we don't have to remember to explicitly set image sizes on every image instance.
++ *
++ * To use as a stand-in replacement import { AutoImage as Image } and remove the
++ * Image import from react-native. Now all images in that file are handled by this
++ * component and are web-ready if not explicitly sized in the style property.
++ */
+ export function AutoImage(props: ImageProps) {
+   const [imageSize, setImageSize] = useState({ width: 0, height: 0 })
+ 
+diff --git a/IgniteDiffApp/app/models/extensions/with-root-store.ts b/IgniteDiffApp/app/models/extensions/with-root-store.ts
+index eff769c..675e0a7 100644
+--- a/IgniteDiffApp/app/models/extensions/with-root-store.ts
++++ b/IgniteDiffApp/app/models/extensions/with-root-store.ts
+@@ -1,5 +1,5 @@
+ import { getRoot, IStateTreeNode } from "mobx-state-tree"
+-import { RootStoreModel } from "../root-store/root-store"
++import { RootStore, RootStoreModel } from "../root-store/root-store"
+ 
+ /**
+  * Adds a rootStore property to the node for a convenient
+@@ -10,7 +10,7 @@ export const withRootStore = (self: IStateTreeNode) => ({
+     /**
+      * The root store.
+      */
+-    get rootStore() {
++    get rootStore(): RootStore {
+       return getRoot<typeof RootStoreModel>(self)
+     },
+   },
+diff --git a/IgniteDiffApp/app/navigators/main-navigator.tsx b/IgniteDiffApp/app/navigators/app-navigator.tsx
+similarity index 65%
+rename from IgniteDiffApp/app/navigators/main-navigator.tsx
+rename to IgniteDiffApp/app/navigators/app-navigator.tsx
+index 9ad110a..382cbc3 100644
+--- a/IgniteDiffApp/app/navigators/main-navigator.tsx
++++ b/IgniteDiffApp/app/navigators/app-navigator.tsx
+@@ -1,10 +1,11 @@
+ /**
+- * This is the navigator you will modify to display the logged-in screens of your app.
+- * You can use RootNavigator to also display an auth flow or other user flows.
+- *
+- * You'll likely spend most of your time in this file.
++ * The app navigator (formerly "AppNavigator" and "MainNavigator") is used for the primary
++ * navigation flows of your app.
++ * Generally speaking, it will contain an auth flow (registration, login, forgot password)
++ * and a "main" flow which the user will use once logged in.
+  */
+ import React from "react"
++import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native"
+ import { createStackNavigator } from "@react-navigation/stack"
+ import { WelcomeScreen, DemoScreen, DemoListScreen } from "../screens"
+ 
+@@ -20,22 +21,22 @@ import { WelcomeScreen, DemoScreen, DemoListScreen } from "../screens"
+  *   https://reactnavigation.org/docs/params/
+  *   https://reactnavigation.org/docs/typescript#type-checking-the-navigator
+  */
+-export type PrimaryParamList = {
++export type NavigatorParamList = {
+   welcome: undefined
+   demo: undefined
+   demoList: undefined
+ }
+ 
+ // Documentation: https://reactnavigation.org/docs/stack-navigator/
+-const Stack = createStackNavigator<PrimaryParamList>()
++const Stack = createStackNavigator<NavigatorParamList>()
+ 
+-export function MainNavigator() {
++const AppStack = () => {
+   return (
+     <Stack.Navigator
+       screenOptions={{
+-        cardStyle: { backgroundColor: "transparent" },
+         headerShown: false,
+       }}
++      initialRouteName="welcome"
+     >
+       <Stack.Screen name="welcome" component={WelcomeScreen} />
+       <Stack.Screen name="demo" component={DemoScreen} />
+@@ -44,6 +45,19 @@ export function MainNavigator() {
+   )
+ }
+ 
++export const AppNavigator = React.forwardRef<
++  NavigationContainerRef,
++  Partial<React.ComponentProps<typeof NavigationContainer>>
++>((props, ref) => {
++  return (
++    <NavigationContainer {...props} ref={ref}>
++      <AppStack />
++    </NavigationContainer>
++  )
++})
++
++AppNavigator.displayName = "AppNavigator"
++
+ /**
+  * A list of routes from which we're allowed to leave the app when
+  * the user presses the back button on Android.
+diff --git a/IgniteDiffApp/app/navigators/index.ts b/IgniteDiffApp/app/navigators/index.ts
+index b1b89a2..3d19b17 100644
+--- a/IgniteDiffApp/app/navigators/index.ts
++++ b/IgniteDiffApp/app/navigators/index.ts
+@@ -1,4 +1,3 @@
+-export * from "./main-navigator"
+-export * from "./root-navigator"
++export * from "./app-navigator"
+ export * from "./navigation-utilities"
+ // export other navigators from here
+diff --git a/IgniteDiffApp/app/navigators/navigation-utilities.tsx b/IgniteDiffApp/app/navigators/navigation-utilities.tsx
+index de1ea05..fcd12f7 100644
+--- a/IgniteDiffApp/app/navigators/navigation-utilities.tsx
++++ b/IgniteDiffApp/app/navigators/navigation-utilities.tsx
+@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
+ import { BackHandler } from "react-native"
+ import { PartialState, NavigationState, NavigationContainerRef } from "@react-navigation/native"
+ 
+-export const RootNavigation = {
++export const AppNavigation = {
+   navigate(name: string) {
+     name // eslint-disable-line no-unused-expressions
+   },
+@@ -13,9 +13,9 @@ export const RootNavigation = {
+   },
+ }
+ 
+-export const setRootNavigation = (ref: React.RefObject<NavigationContainerRef>) => {
+-  for (const method in RootNavigation) {
+-    RootNavigation[method] = (...args: any) => {
++export const setAppNavigation = (ref: React.RefObject<NavigationContainerRef>) => {
++  for (const method in AppNavigation) {
++    AppNavigation[method] = (...args: any) => {
+       if (ref.current) {
+         return ref.current[method](...args)
+       }
+diff --git a/IgniteDiffApp/app/navigators/root-navigator.tsx b/IgniteDiffApp/app/navigators/root-navigator.tsx
+deleted file mode 100644
+index 2c04f29..0000000
+--- a/IgniteDiffApp/app/navigators/root-navigator.tsx
++++ /dev/null
+@@ -1,59 +0,0 @@
+-/**
+- * The root navigator is used to switch between major navigation flows of your app.
+- * Generally speaking, it will contain an auth flow (registration, login, forgot password)
+- * and a "main" flow (which is contained in your MainNavigator) which the user
+- * will use once logged in.
+- */
+-import React from "react"
+-import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native"
+-import { createStackNavigator } from "@react-navigation/stack"
+-import { MainNavigator } from "./main-navigator"
+-import { color } from "../theme"
+-
+-/**
+- * This type allows TypeScript to know what routes are defined in this navigator
+- * as well as what properties (if any) they might take when navigating to them.
+- *
+- * We recommend using MobX-State-Tree store(s) to handle state rather than navigation params.
+- *
+- * For more information, see this documentation:
+- *   https://reactnavigation.org/docs/params/
+- *   https://reactnavigation.org/docs/typescript#type-checking-the-navigator
+- */
+-export type RootParamList = {
+-  mainStack: undefined
+-}
+-
+-const Stack = createStackNavigator<RootParamList>()
+-
+-const RootStack = () => {
+-  return (
+-    <Stack.Navigator
+-      screenOptions={{
+-        cardStyle: { backgroundColor: color.palette.deepPurple },
+-        headerShown: false,
+-      }}
+-    >
+-      <Stack.Screen
+-        name="mainStack"
+-        component={MainNavigator}
+-        options={{
+-          headerShown: false,
+-        }}
+-      />
+-    </Stack.Navigator>
+-  )
+-}
+-
+-export const RootNavigator = React.forwardRef<
+-  NavigationContainerRef,
+-  Partial<React.ComponentProps<typeof NavigationContainer>>
+->((props, ref) => {
+-  return (
+-    <NavigationContainer {...props} ref={ref}>
+-      <RootStack />
+-    </NavigationContainer>
+-  )
+-})
+-
+-RootNavigator.displayName = "RootNavigator"
+diff --git a/IgniteDiffApp/app/services/reactotron/reactotron.ts b/IgniteDiffApp/app/services/reactotron/reactotron.ts
+index 0ec12ad..c585b91 100644
+--- a/IgniteDiffApp/app/services/reactotron/reactotron.ts
++++ b/IgniteDiffApp/app/services/reactotron/reactotron.ts
+@@ -5,7 +5,7 @@ import { onSnapshot } from "mobx-state-tree"
+ import { ReactotronConfig, DEFAULT_REACTOTRON_CONFIG } from "./reactotron-config"
+ import { mst } from "reactotron-mst"
+ import { clear } from "../../utils/storage"
+-import { RootNavigation } from "../../navigators"
++import { AppNavigation } from "../../navigators/navigation-utilities"
+ import { Platform } from "react-native"
+ 
+ // Teach TypeScript about the bad things we want to do.
+@@ -158,7 +158,7 @@ export class Reactotron {
+         command: "resetNavigation",
+         handler: () => {
+           console.tron.log("resetting navigation state")
+-          RootNavigation.resetRoot({ routes: [] })
++          AppNavigation.resetRoot({ routes: [] })
+         },
+       })
+ 
+@@ -168,7 +168,7 @@ export class Reactotron {
+         command: "goBack",
+         handler: () => {
+           console.tron.log("Going back")
+-          RootNavigation.goBack()
++          AppNavigation.goBack()
+         },
+       })
+ 
+diff --git a/IgniteDiffApp/package.json b/IgniteDiffApp/package.json
+index 72fe2d7..4ef3395 100644
+--- a/IgniteDiffApp/package.json
++++ b/IgniteDiffApp/package.json
+@@ -65,7 +65,6 @@
+     "@storybook/react-native-server": "5.3.23",
+     "@types/i18n-js": "3.0.3",
+     "@types/jest": "26.0.19",
+-    "@types/ramda": "0.27.32",
+     "@types/react": "16.9.35",
+     "@types/react-dom": "16.9.8",
+     "@types/react-native": "0.63.2",
+diff --git a/IgniteDiffApp/storybook/views/story-screen.tsx b/IgniteDiffApp/storybook/views/story-screen.tsx
+index fc49ea9..d83f6f5 100644
+--- a/IgniteDiffApp/storybook/views/story-screen.tsx
++++ b/IgniteDiffApp/storybook/views/story-screen.tsx
+@@ -8,7 +8,7 @@ export interface StoryScreenProps {
+ }
+ 
+ const behavior = Platform.OS === "ios" ? "padding" : undefined
+-export const StoryScreen = (props) => (
++export const StoryScreen = (props: StoryScreenProps) => (
+   <KeyboardAvoidingView style={ROOT} behavior={behavior} keyboardVerticalOffset={50}>
+     {props.children}
+   </KeyboardAvoidingView>
+diff --git a/IgniteDiffApp/yarn.lock b/IgniteDiffApp/yarn.lock
+index 7810e8a..977b934 100644
+--- a/IgniteDiffApp/yarn.lock
++++ b/IgniteDiffApp/yarn.lock
+@@ -3459,13 +3459,6 @@
+   resolved "https://registry.yarnpkg.com/@types/qs/-/qs-6.9.7.tgz#63bb7d067db107cc1e457c303bc25d511febf6cb"
+   integrity sha512-FGa1F62FT09qcrueBA6qYTrJPVDzah9a+493+o2PCXsesWHIn27G98TsSMs3WPNbZIEj4+VJf6saSFpvD+3Zsw==
+ 
+-"@types/ramda@0.27.32":
+-  version "0.27.32"
+-  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.27.32.tgz#4f62ff4fc3a41dc32dd9df3cde53861b6ee69e6f"
+-  integrity sha512-vdwZcWC+hlTxB//LZQLS1+VEdArImGI4yVKUpeqB8b9mBXgDFXCuQoOt8spQbi8fTyNLOdqRv6liSm2ckxWLog==
+-  dependencies:
+-    ts-toolbelt "^6.15.1"
+-
+ "@types/reach__router@^1.2.3", "@types/reach__router@^1.3.5":
+   version "1.3.9"
+   resolved "https://registry.yarnpkg.com/@types/reach__router/-/reach__router-1.3.9.tgz#d3aaac0072665c81063cc6c557c18dadd642b226"
+@@ -18130,11 +18123,6 @@ ts-pnp@^1.1.2, ts-pnp@^1.1.6:
+   resolved "https://registry.yarnpkg.com/ts-pnp/-/ts-pnp-1.2.0.tgz#a500ad084b0798f1c3071af391e65912c86bca92"
+   integrity sha512-csd+vJOb/gkzvcCHgTGSChYpy5f1/XKNsmvBGO4JXS+z1v2HobugDz4s1IeFXM3wZB44uczs+eazB5Q/ccdhQw==
+ 
+-ts-toolbelt@^6.15.1:
+-  version "6.15.5"
+-  resolved "https://registry.yarnpkg.com/ts-toolbelt/-/ts-toolbelt-6.15.5.tgz#cb3b43ed725cb63644782c64fbcad7d8f28c0a83"
+-  integrity sha512-FZIXf1ksVyLcfr7M317jbB67XFJhOO1YqdTcuGaq9q5jLUoTikukZ+98TPjKiP2jC5CgmYdWWYs0s2nLSU0/1A==
+-
+ tsconfig-paths@^3.9.0:
+   version "3.10.1"
+   resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.10.1.tgz#79ae67a68c15289fdf5c51cb74f397522d795ed7"

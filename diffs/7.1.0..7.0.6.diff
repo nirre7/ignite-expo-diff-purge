@@ -1,0 +1,256 @@
+diff --git a/IgniteDiffApp/app/app.tsx b/IgniteDiffApp/app/app.tsx
+index 84cbf06..d737864 100644
+--- a/IgniteDiffApp/app/app.tsx
++++ b/IgniteDiffApp/app/app.tsx
+@@ -18,9 +18,9 @@ import { initFonts } from "./theme/fonts" // expo
+ import * as storage from "./utils/storage"
+ import {
+   useBackButtonHandler,
+-  AppNavigator,
++  RootNavigator,
+   canExit,
+-  setAppNavigation,
++  setRootNavigation,
+   useNavigationPersistence,
+ } from "./navigators"
+ import { RootStore, RootStoreProvider, setupRootStore } from "./models"
+@@ -41,7 +41,7 @@ function App() {
+   const navigationRef = useRef<NavigationContainerRef>(null)
+   const [rootStore, setRootStore] = useState<RootStore | undefined>(undefined)
+ 
+-  setAppNavigation(navigationRef)
++  setRootNavigation(navigationRef)
+   useBackButtonHandler(navigationRef, canExit)
+   const { initialNavigationState, onNavigationStateChange } = useNavigationPersistence(
+     storage,
+@@ -67,7 +67,7 @@ function App() {
+     <ToggleStorybook>
+       <RootStoreProvider value={rootStore}>
+         <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+-          <AppNavigator
++          <RootNavigator
+             ref={navigationRef}
+             initialState={initialNavigationState}
+             onStateChange={onNavigationStateChange}
+diff --git a/IgniteDiffApp/app/models/extensions/with-root-store.ts b/IgniteDiffApp/app/models/extensions/with-root-store.ts
+index 675e0a7..eff769c 100644
+--- a/IgniteDiffApp/app/models/extensions/with-root-store.ts
++++ b/IgniteDiffApp/app/models/extensions/with-root-store.ts
+@@ -1,5 +1,5 @@
+ import { getRoot, IStateTreeNode } from "mobx-state-tree"
+-import { RootStore, RootStoreModel } from "../root-store/root-store"
++import { RootStoreModel } from "../root-store/root-store"
+ 
+ /**
+  * Adds a rootStore property to the node for a convenient
+@@ -10,7 +10,7 @@ export const withRootStore = (self: IStateTreeNode) => ({
+     /**
+      * The root store.
+      */
+-    get rootStore(): RootStore {
++    get rootStore() {
+       return getRoot<typeof RootStoreModel>(self)
+     },
+   },
+diff --git a/IgniteDiffApp/app/navigators/index.ts b/IgniteDiffApp/app/navigators/index.ts
+index 3d19b17..b1b89a2 100644
+--- a/IgniteDiffApp/app/navigators/index.ts
++++ b/IgniteDiffApp/app/navigators/index.ts
+@@ -1,3 +1,4 @@
+-export * from "./app-navigator"
++export * from "./main-navigator"
++export * from "./root-navigator"
+ export * from "./navigation-utilities"
+ // export other navigators from here
+diff --git a/IgniteDiffApp/app/navigators/app-navigator.tsx b/IgniteDiffApp/app/navigators/main-navigator.tsx
+similarity index 65%
+rename from IgniteDiffApp/app/navigators/app-navigator.tsx
+rename to IgniteDiffApp/app/navigators/main-navigator.tsx
+index 382cbc3..9ad110a 100644
+--- a/IgniteDiffApp/app/navigators/app-navigator.tsx
++++ b/IgniteDiffApp/app/navigators/main-navigator.tsx
+@@ -1,11 +1,10 @@
+ /**
+- * The app navigator (formerly "AppNavigator" and "MainNavigator") is used for the primary
+- * navigation flows of your app.
+- * Generally speaking, it will contain an auth flow (registration, login, forgot password)
+- * and a "main" flow which the user will use once logged in.
++ * This is the navigator you will modify to display the logged-in screens of your app.
++ * You can use RootNavigator to also display an auth flow or other user flows.
++ *
++ * You'll likely spend most of your time in this file.
+  */
+ import React from "react"
+-import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native"
+ import { createStackNavigator } from "@react-navigation/stack"
+ import { WelcomeScreen, DemoScreen, DemoListScreen } from "../screens"
+ 
+@@ -21,22 +20,22 @@ import { WelcomeScreen, DemoScreen, DemoListScreen } from "../screens"
+  *   https://reactnavigation.org/docs/params/
+  *   https://reactnavigation.org/docs/typescript#type-checking-the-navigator
+  */
+-export type NavigatorParamList = {
++export type PrimaryParamList = {
+   welcome: undefined
+   demo: undefined
+   demoList: undefined
+ }
+ 
+ // Documentation: https://reactnavigation.org/docs/stack-navigator/
+-const Stack = createStackNavigator<NavigatorParamList>()
++const Stack = createStackNavigator<PrimaryParamList>()
+ 
+-const AppStack = () => {
++export function MainNavigator() {
+   return (
+     <Stack.Navigator
+       screenOptions={{
++        cardStyle: { backgroundColor: "transparent" },
+         headerShown: false,
+       }}
+-      initialRouteName="welcome"
+     >
+       <Stack.Screen name="welcome" component={WelcomeScreen} />
+       <Stack.Screen name="demo" component={DemoScreen} />
+@@ -45,19 +44,6 @@ const AppStack = () => {
+   )
+ }
+ 
+-export const AppNavigator = React.forwardRef<
+-  NavigationContainerRef,
+-  Partial<React.ComponentProps<typeof NavigationContainer>>
+->((props, ref) => {
+-  return (
+-    <NavigationContainer {...props} ref={ref}>
+-      <AppStack />
+-    </NavigationContainer>
+-  )
+-})
+-
+-AppNavigator.displayName = "AppNavigator"
+-
+ /**
+  * A list of routes from which we're allowed to leave the app when
+  * the user presses the back button on Android.
+diff --git a/IgniteDiffApp/app/navigators/navigation-utilities.tsx b/IgniteDiffApp/app/navigators/navigation-utilities.tsx
+index fcd12f7..de1ea05 100644
+--- a/IgniteDiffApp/app/navigators/navigation-utilities.tsx
++++ b/IgniteDiffApp/app/navigators/navigation-utilities.tsx
+@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react"
+ import { BackHandler } from "react-native"
+ import { PartialState, NavigationState, NavigationContainerRef } from "@react-navigation/native"
+ 
+-export const AppNavigation = {
++export const RootNavigation = {
+   navigate(name: string) {
+     name // eslint-disable-line no-unused-expressions
+   },
+@@ -13,9 +13,9 @@ export const AppNavigation = {
+   },
+ }
+ 
+-export const setAppNavigation = (ref: React.RefObject<NavigationContainerRef>) => {
+-  for (const method in AppNavigation) {
+-    AppNavigation[method] = (...args: any) => {
++export const setRootNavigation = (ref: React.RefObject<NavigationContainerRef>) => {
++  for (const method in RootNavigation) {
++    RootNavigation[method] = (...args: any) => {
+       if (ref.current) {
+         return ref.current[method](...args)
+       }
+diff --git a/IgniteDiffApp/app/navigators/root-navigator.tsx b/IgniteDiffApp/app/navigators/root-navigator.tsx
+new file mode 100644
+index 0000000..2c04f29
+--- /dev/null
++++ b/IgniteDiffApp/app/navigators/root-navigator.tsx
+@@ -0,0 +1,59 @@
++/**
++ * The root navigator is used to switch between major navigation flows of your app.
++ * Generally speaking, it will contain an auth flow (registration, login, forgot password)
++ * and a "main" flow (which is contained in your MainNavigator) which the user
++ * will use once logged in.
++ */
++import React from "react"
++import { NavigationContainer, NavigationContainerRef } from "@react-navigation/native"
++import { createStackNavigator } from "@react-navigation/stack"
++import { MainNavigator } from "./main-navigator"
++import { color } from "../theme"
++
++/**
++ * This type allows TypeScript to know what routes are defined in this navigator
++ * as well as what properties (if any) they might take when navigating to them.
++ *
++ * We recommend using MobX-State-Tree store(s) to handle state rather than navigation params.
++ *
++ * For more information, see this documentation:
++ *   https://reactnavigation.org/docs/params/
++ *   https://reactnavigation.org/docs/typescript#type-checking-the-navigator
++ */
++export type RootParamList = {
++  mainStack: undefined
++}
++
++const Stack = createStackNavigator<RootParamList>()
++
++const RootStack = () => {
++  return (
++    <Stack.Navigator
++      screenOptions={{
++        cardStyle: { backgroundColor: color.palette.deepPurple },
++        headerShown: false,
++      }}
++    >
++      <Stack.Screen
++        name="mainStack"
++        component={MainNavigator}
++        options={{
++          headerShown: false,
++        }}
++      />
++    </Stack.Navigator>
++  )
++}
++
++export const RootNavigator = React.forwardRef<
++  NavigationContainerRef,
++  Partial<React.ComponentProps<typeof NavigationContainer>>
++>((props, ref) => {
++  return (
++    <NavigationContainer {...props} ref={ref}>
++      <RootStack />
++    </NavigationContainer>
++  )
++})
++
++RootNavigator.displayName = "RootNavigator"
+diff --git a/IgniteDiffApp/app/services/reactotron/reactotron.ts b/IgniteDiffApp/app/services/reactotron/reactotron.ts
+index c585b91..0ec12ad 100644
+--- a/IgniteDiffApp/app/services/reactotron/reactotron.ts
++++ b/IgniteDiffApp/app/services/reactotron/reactotron.ts
+@@ -5,7 +5,7 @@ import { onSnapshot } from "mobx-state-tree"
+ import { ReactotronConfig, DEFAULT_REACTOTRON_CONFIG } from "./reactotron-config"
+ import { mst } from "reactotron-mst"
+ import { clear } from "../../utils/storage"
+-import { AppNavigation } from "../../navigators/navigation-utilities"
++import { RootNavigation } from "../../navigators"
+ import { Platform } from "react-native"
+ 
+ // Teach TypeScript about the bad things we want to do.
+@@ -158,7 +158,7 @@ export class Reactotron {
+         command: "resetNavigation",
+         handler: () => {
+           console.tron.log("resetting navigation state")
+-          AppNavigation.resetRoot({ routes: [] })
++          RootNavigation.resetRoot({ routes: [] })
+         },
+       })
+ 
+@@ -168,7 +168,7 @@ export class Reactotron {
+         command: "goBack",
+         handler: () => {
+           console.tron.log("Going back")
+-          AppNavigation.goBack()
++          RootNavigation.goBack()
+         },
+       })
+ 
