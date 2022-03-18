@@ -1,0 +1,132 @@
+diff --git a/IgniteDiffApp/app/components/bullet-item/bullet-item.story.tsx b/IgniteDiffApp/app/components/bullet-item/bullet-item.story.tsx
+deleted file mode 100644
+index 85df52c..0000000
+--- a/IgniteDiffApp/app/components/bullet-item/bullet-item.story.tsx
++++ /dev/null
+@@ -1,33 +0,0 @@
+-import { storiesOf } from "@storybook/react-native"
+-import * as React from "react"
+-import { View } from "react-native"
+-import { Story, StoryScreen, UseCase } from "../../../storybook/views"
+-import { color } from "../../theme"
+-import { BulletItem } from "./bullet-item"
+-
+-declare let module
+-
+-const VIEWSTYLE = {
+-  flex: 1,
+-  backgroundColor: color.storybookDarkBg,
+-  borderWidth: 5,
+-}
+-
+-storiesOf("Bullet Item", module)
+-  .addDecorator((fn) => <StoryScreen>{fn()}</StoryScreen>)
+-  .add("Styling", () => (
+-    <Story>
+-      <UseCase noPad text="default" usage="The default usage">
+-        <BulletItem text="The default Bullet Item text" />
+-      </UseCase>
+-      <UseCase
+-        noPad
+-        text="with view wrapper"
+-        usage={`backgroundColor: ${color.storybookDarkBg} (color.storybookDarkBg)`}
+-      >
+-        <View style={VIEWSTYLE}>
+-          <BulletItem text="The default Bullet Item text" />
+-        </View>
+-      </UseCase>
+-    </Story>
+-  ))
+diff --git a/IgniteDiffApp/app/services/reactotron/reactotron-config.ts b/IgniteDiffApp/app/services/reactotron/reactotron-config.ts
+index 707c845..dd87bd7 100644
+--- a/IgniteDiffApp/app/services/reactotron/reactotron-config.ts
++++ b/IgniteDiffApp/app/services/reactotron/reactotron-config.ts
+@@ -28,8 +28,3 @@ export const DEFAULT_REACTOTRON_CONFIG: ReactotronConfig = {
+     snapshots: false,
+   },
+ }
+-
+-/**
+- * The default Reactotron WebSocket URI
+- */
+-export const DEFAULT_REACTOTRON_WS_URI = "ws://localhost:9090"
+diff --git a/IgniteDiffApp/storybook/storybook-registry.ts b/IgniteDiffApp/storybook/storybook-registry.ts
+index 13a27c2..c782fc7 100644
+--- a/IgniteDiffApp/storybook/storybook-registry.ts
++++ b/IgniteDiffApp/storybook/storybook-registry.ts
+@@ -1,7 +1,6 @@
+ require("../app/components/text/text.story")
+ require("../app/components/auto-image/auto-image.story")
+ require("../app/components/button/button.story")
+-require("../app/components/bullet-item/bullet-item.story")
+ require("../app/components/form-row/form-row.story")
+ require("../app/components/switch/switch.story")
+ require("../app/components/text-field/text-field.story")
+diff --git a/IgniteDiffApp/storybook/toggle-storybook.tsx b/IgniteDiffApp/storybook/toggle-storybook.tsx
+index 9c9b43f..394ecf4 100644
+--- a/IgniteDiffApp/storybook/toggle-storybook.tsx
++++ b/IgniteDiffApp/storybook/toggle-storybook.tsx
+@@ -1,7 +1,6 @@
+-import React, { useState, useEffect, useRef } from "react"
++import React, { useState, useEffect } from "react"
+ import { DevSettings } from "react-native"
+ import { loadString, saveString } from "../app/utils/storage"
+-import { DEFAULT_REACTOTRON_WS_URI } from "../app/services/reactotron/reactotron-config"
+ 
+ /**
+  * Toggle Storybook mode, in __DEV__ mode only.
+@@ -16,19 +15,14 @@ import { DEFAULT_REACTOTRON_WS_URI } from "../app/services/reactotron/reactotron
+ export function ToggleStorybook(props) {
+   const [showStorybook, setShowStorybook] = useState(false)
+   const [StorybookUIRoot, setStorybookUIRoot] = useState(null)
+-  const ws = useRef(new WebSocket(DEFAULT_REACTOTRON_WS_URI))
+ 
+   useEffect(() => {
+-    if (!__DEV__) {
+-      return undefined
+-    }
+-
+-    // Load the setting from storage if it's there
+-    loadString("devStorybook").then((storedSetting) => {
+-      // Set the initial value
+-      setShowStorybook(storedSetting === "on")
++    if (__DEV__ && DevSettings) {
++      // Load the setting from storage if it's there
++      loadString("devStorybook").then((storedSetting) => {
++        // Set the initial value
++        setShowStorybook(storedSetting === "on")
+ 
+-      if (DevSettings) {
+         // Add our toggle command to the menu
+         DevSettings.addMenuItem("Toggle Storybook", () => {
+           setShowStorybook((show) => {
+@@ -42,25 +36,11 @@ export function ToggleStorybook(props) {
+             return show
+           })
+         })
+-      }
+-
+-      // Load the storybook UI once
+-      setStorybookUIRoot(() => require("./storybook").StorybookUIRoot)
+ 
+-      // Behave as Reactotron.storybookSwitcher(), not a HOC way.
+-      ws.current.onmessage = (e) => {
+-        const data = JSON.parse(e.data)
+-
+-        if (data.type === "storybook") {
+-          saveString("devStorybook", data.payload ? "on" : "off")
+-          setShowStorybook(data.payload)
+-        }
+-      }
+-      ws.current.onerror = (e) => {
+-        console.tron.error(e, null)
+-        setShowStorybook(storedSetting === "on")
+-      }
+-    })
++        // Load the storybook UI once
++        setStorybookUIRoot(() => require("./storybook").StorybookUIRoot)
++      })
++    }
+   }, [])
+ 
+   if (showStorybook) {
