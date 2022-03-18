@@ -1,0 +1,11 @@
+diff --git a/IgniteDiffApp/app.json b/IgniteDiffApp/app.json
+index 88f1729..0e7db0c 100644
+--- a/IgniteDiffApp/app.json
++++ b/IgniteDiffApp/app.json
+@@ -1,6 +1,4 @@
+ {
+-  "name": "IgniteDiffApp",
+-  "displayName": "IgniteDiffApp",
+   "expo": {
+     "name": "IgniteDiffApp",
+     "slug": "IgniteDiffApp",
