@@ -1,4 +1,9 @@
-# Ignite with Expo diff PURGE
+# THIS REPOSITY HAS BEEN ARCHIVED, PLEASE USE [ignite-diff-purge](https://github.com/nirre7/ignite-expo-diff-purge.git)
+
+
+
+
+## Ignite with Expo diff PURGE
 
 [ignite](https://github.com/infinitered/ignite) based customized version of [rn-diff-purge](https://github.com/react-native-community/rn-diff-purge/), all credit should go to the authors of that great tool!
 
