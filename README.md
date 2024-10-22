@@ -1,4 +1,4 @@
-# THIS REPOSITY HAS BEEN ARCHIVED, PLEASE USE [ignite-diff-purge](https://github.com/nirre7/ignite-diff-purge.git)
+# THIS REPOSITORY HAS BEEN ARCHIVED, PLEASE USE [ignite-diff-purge](https://github.com/nirre7/ignite-diff-purge.git)
 
 
 
